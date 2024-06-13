@@ -53,5 +53,4 @@ public class UserService {
     public Page<User> findByParams(String username, String password, PageRequest paging) {
         return repository.findByParams(username, password, paging);
     }
-
 }

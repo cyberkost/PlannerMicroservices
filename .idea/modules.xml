@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-entity/planner-entity.main.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-entity/planner-entity.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-todo/planner-todo.main.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-todo/planner-todo.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-users/planner-users.main.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-users/planner-users.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-utils/planner-utils.main.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-utils/planner-utils.main.iml" />
     </modules>
   </component>
