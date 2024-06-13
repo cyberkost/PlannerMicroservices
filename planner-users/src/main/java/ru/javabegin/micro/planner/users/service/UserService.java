@@ -1,12 +1,12 @@
 package ru.javabegin.micro.planner.users.service;
 
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.javabegin.micro.planner.entity.User;
 import ru.javabegin.micro.planner.users.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 // всегда нужно создавать отдельный класс Service для доступа к данным, даже если кажется,

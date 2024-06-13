@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Priority;
-import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
-import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
 import ru.javabegin.micro.planner.todo.search.PrioritySearchValues;
 import ru.javabegin.micro.planner.todo.service.PriorityService;
 
@@ -37,26 +35,18 @@ import java.util.NoSuchElementException;
 @CrossOrigin(origins = "https://localhost:4200", allowCredentials = "true")
  */
 public class PriorityController {
-
     // доступ к данным из БД
-    private PriorityService service;
+    private PriorityService priorityService;
 
-    // микросервисы для работы с пользователями
-    private UserRestBuilder userRestBuilder;
-    private UserWebClientBuilder userWebClientBuilder;
-
-    // автоматическое внедрение экземпляра класса через конструктор
+    // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public PriorityController(PriorityService service, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder) {
-        this.service = service;
-        this.userRestBuilder = userRestBuilder;
-        this.userWebClientBuilder = userWebClientBuilder;
+    public PriorityController(PriorityService priorityService) {
+        this.priorityService = priorityService;
     }
-
 
     @PostMapping("/all")
     public List<Priority> findAll(@RequestBody Long userId) {
-        return service.findAll(userId);
+        return priorityService.findAll(userId);
     }
 
 
@@ -79,13 +69,8 @@ public class PriorityController {
             return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-
-        // если такой пользователь существует
-        if (userWebClientBuilder.userExists(priority.getUserId())) { // вызываем микросервис из другого модуля
-            return ResponseEntity.ok(service.add(priority)); // возвращаем добавленный объект с заполненным ID
-        }
-
-        return new ResponseEntity("user id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        // save работает как на добавление, так и на обновление
+        return ResponseEntity.ok(priorityService.add(priority));
     }
 
 
@@ -109,8 +94,7 @@ public class PriorityController {
         }
 
         // save работает как на добавление, так и на обновление
-        service.update(priority);
-
+        priorityService.update(priority);
 
         return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
 
@@ -125,7 +109,7 @@ public class PriorityController {
         // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
         // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
         try {
-            priority = service.findById(id);
+            priority = priorityService.findById(id);
         } catch (NoSuchElementException e) { // если объект не будет найден
             e.printStackTrace();
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -142,7 +126,7 @@ public class PriorityController {
         // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
         // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
         try {
-            service.deleteById(id);
+            priorityService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -158,12 +142,11 @@ public class PriorityController {
 
         // проверка на обязательные параметры
         if (prioritySearchValues.getUserId() == null || prioritySearchValues.getUserId() == 0) {
-            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("missed param: user id", HttpStatus.NOT_ACCEPTABLE);
         }
 
         // если вместо текста будет пусто или null - вернутся все категории
-        return ResponseEntity.ok(service.find(prioritySearchValues.getTitle(), prioritySearchValues.getUserId()));
+        return ResponseEntity.ok(priorityService.find(prioritySearchValues.getTitle(), prioritySearchValues.getUserId()));
     }
-
 
 }
