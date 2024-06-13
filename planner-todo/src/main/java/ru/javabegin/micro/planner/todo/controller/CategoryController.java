@@ -1,15 +1,10 @@
 package ru.javabegin.micro.planner.todo.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Category;
-import ru.javabegin.micro.planner.entity.User;
-import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
-import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
-import ru.javabegin.micro.planner.todo.feign.UserFeignClient;
 import ru.javabegin.micro.planner.todo.search.CategorySearchValues;
 import ru.javabegin.micro.planner.todo.service.CategoryService;
 
@@ -23,20 +18,10 @@ public class CategoryController {
     // доступ к данным из БД
     private CategoryService categoryService;
 
-    // микросервисы для работы с пользователями
-    private UserRestBuilder userRestBuilder;
-    private UserWebClientBuilder userWebClientBuilder;
-    // клиет для вызова мс
-    private  @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient")UserFeignClient userFeignClient;
-
-
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public CategoryController(CategoryService categoryService, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder, @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient") UserFeignClient userFeignClient) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.userRestBuilder = userRestBuilder;
-        this.userWebClientBuilder = userWebClientBuilder;
-        this.userFeignClient = userFeignClient;
     }
 
     @PostMapping("/all")
@@ -59,30 +44,7 @@ public class CategoryController {
             return new ResponseEntity("missed param: title MUST be not null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // если такой пользователь существует
-//        if (userWebClientBuilder.userExists(category.getUserId())) { // вызываем микросервис из другого модуля
-////            return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
-////        }
-
-//        // подписываемся на результат
-//        userWebClientBuilder.userExistsAsync(category.getUserId()).subscribe(user -> System.out.println("user = " + user));
-
-        // вызов мс через feign интерфейс
-
-        ResponseEntity<User> result =  userFeignClient.findUserById(category.getUserId());
-        System.out.println(result);
-
-        if (result == null){ // если мс недоступен - вернется null
-            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
-        }
-
-        if (result.getBody() != null){ // если пользователь не пустой
-            return ResponseEntity.ok(categoryService.add(category));
-        }
-
-        // если пользователя НЕ существует
-        return new ResponseEntity("user id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
-
+        return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
     }
 
 
@@ -104,6 +66,7 @@ public class CategoryController {
 
         return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
     }
+
 
 
     // для удаления используем тип запроса DELETE и передаем ID для удаления
