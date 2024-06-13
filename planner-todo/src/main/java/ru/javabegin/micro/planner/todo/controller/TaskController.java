@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Task;
-import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
-import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
 import ru.javabegin.micro.planner.todo.search.TaskSearchValues;
 import ru.javabegin.micro.planner.todo.service.TaskService;
 
@@ -41,17 +39,11 @@ public class TaskController {
     public static final String ID_COLUMN = "id"; // имя столбца id
     private final TaskService taskService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
-    // микросервисы для работы с пользователями
-    private UserRestBuilder userRestBuilder;
-    private UserWebClientBuilder userWebClientBuilder;
-
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public TaskController(TaskService taskService, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder) {
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
-        this.userRestBuilder = userRestBuilder;
-        this.userWebClientBuilder = userWebClientBuilder;
     }
 
 
@@ -76,14 +68,7 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // если такой пользователь существует
-        if (userWebClientBuilder.userExists(task.getUserId())) { // вызываем микросервис из другого модуля
-            return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
-        }
-
-        return new ResponseEntity("user id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
-
-
+        return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
 
     }
 
@@ -169,7 +154,7 @@ public class TaskController {
 
         // проверка на обязательные параметры
         if (userId == null || userId == 0) {
-            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("missed param: user id", HttpStatus.NOT_ACCEPTABLE);
         }
 
 
@@ -230,7 +215,5 @@ public class TaskController {
         return ResponseEntity.ok(result);
 
     }
-
-
 
 }
