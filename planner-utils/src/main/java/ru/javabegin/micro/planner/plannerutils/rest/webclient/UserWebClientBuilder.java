@@ -54,7 +54,6 @@ public class UserWebClientBuilder {
 
     // иниц. начальных данных
     public Flux<Boolean> initUserData(Long userId) {
-
         Flux<Boolean> fluxUser = WebClient.create(baseUrlData)
                 .post()
                 .uri("init")
