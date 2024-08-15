@@ -81,10 +81,5 @@ public class TestDataService {
         taskService.add(task1);
         taskService.add(task2);
 
-
-        taskService.add(task1);
-        taskService.add(task2);
-
     }
 }
-
