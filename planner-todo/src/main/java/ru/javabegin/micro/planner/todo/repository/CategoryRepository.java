@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-//    // поиск категорий пользователя (по названию)
+//    поиск категорий пользователя (по названию)
 //    List<Category> findByUserEmailOrderByTitleAsc(String email);
 
     // поиск категорий пользователя (по названию)

@@ -83,7 +83,6 @@ public class CategoryController {
             return ResponseEntity.ok(categoryService.add(category));
         }
 
-
         // если пользователя НЕ существует
         return new ResponseEntity("user id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
 

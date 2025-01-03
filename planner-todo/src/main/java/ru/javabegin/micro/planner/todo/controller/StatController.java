@@ -41,6 +41,4 @@ public class StatController {
         // можно не использовать ResponseEntity, а просто вернуть коллекцию, код все равно будет 200 ОК
         return ResponseEntity.ok(service.findStat(userId));
     }
-
-
 }

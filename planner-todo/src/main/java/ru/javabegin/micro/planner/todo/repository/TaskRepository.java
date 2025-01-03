@@ -28,6 +28,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             ") and " +
             "(t.userId=:userId)" // показывать задачи только определенного пользователя, а не все
     )
+
         // искать по всем переданным параметрам (пустые параметры учитываться не будут)
     Page<Task> findByParams(@Param("title") String title,
                             @Param("completed") Boolean completed,

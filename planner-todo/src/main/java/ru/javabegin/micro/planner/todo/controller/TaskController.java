@@ -81,7 +81,6 @@ public class TaskController {
 
     }
 
-
     // обновление
     @PutMapping("/update")
     public ResponseEntity<Task> update(@RequestBody Task task) {
@@ -96,14 +95,12 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-
         // save работает как на добавление, так и на обновление
         taskService.update(task);
 
         return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
 
     }
-
 
     // для удаления используем типа запроса put, а не delete, т.к. он позволяет передавать значение в body, а не в адресной строке
     @DeleteMapping("/delete/{id}")
@@ -139,7 +136,6 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-
     // поиск по любым параметрам TaskSearchValues
     @PostMapping("/search")
     public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValues taskSearchValues) throws ParseException {
@@ -166,12 +162,10 @@ public class TaskController {
             return new ResponseEntity("missed param: user id", HttpStatus.NOT_ACCEPTABLE);
         }
 
-
         // чтобы захватить в выборке все задачи по датам, независимо от времени - можно выставить время с 00:00 до 23:59
 
         Date dateFrom = null;
         Date dateTo = null;
-
 
         // выставить 00:01 для начальной даты (если она указана)
         if (taskSearchValues.getDateFrom() != null) {
@@ -186,7 +180,6 @@ public class TaskController {
 
         }
 
-
         // выставить 23:59 для конечной даты (если она указана)
         if (taskSearchValues.getDateTo() != null) {
 
@@ -200,7 +193,6 @@ public class TaskController {
             dateTo = calendarTo.getTime(); // записываем конечную дату с 23:59
 
         }
-
 
         // направление сортировки
         Sort.Direction direction = sortDirection == null || sortDirection.trim().length() == 0 || sortDirection.trim().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
